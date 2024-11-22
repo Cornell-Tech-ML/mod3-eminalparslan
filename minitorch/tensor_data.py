@@ -65,9 +65,11 @@ def to_index(ordinal: int, shape: Shape, out_index: OutIndex) -> None:
         out_index : return index corresponding to position.
 
     """
-    for i, s in reversed(list(enumerate(shape))):
-        out_index[i] = ordinal % s
-        ordinal //= s
+    cur_ord = ordinal + 0  # NOTE: needed for numba (problem with loop invariance)
+    for i in range(len(shape) - 1, -1, -1):
+        s = shape[i]
+        out_index[i] = cur_ord % s
+        cur_ord //= s
 
 
 def broadcast_index(
